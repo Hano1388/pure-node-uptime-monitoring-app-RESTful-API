@@ -18,6 +18,8 @@ const server = http.createServer(function (req, res) {
     const method = req.method.toLowerCase();
     // Getting queryStringObject
     const queryStringObject = parsedUrl.query;
+    // Get headers
+    const headers = req.headers;
     // Response
     res.end('Hello, there!');
     // Log requested path and request method
@@ -25,7 +27,8 @@ const server = http.createServer(function (req, res) {
       Request received on path: ${trimmedPath}\n
       The method is ${method}\n
       Query String Object: %j\n
-      `, queryStringObject);
+      Headers: %j\n
+      `, queryStringObject, headers);
 });
 
 // Start server on port 3000
