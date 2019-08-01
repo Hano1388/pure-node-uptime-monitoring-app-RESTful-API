@@ -6,6 +6,7 @@
 // Dependencies
 const http = require('http');
 const url = require('url');
+const StringDecoder = require('string_decoder').StringDecoder;
 
 // Create http server
 const server = http.createServer(function (req, res) {
@@ -20,15 +21,26 @@ const server = http.createServer(function (req, res) {
     const queryStringObject = parsedUrl.query;
     // Get headers
     const headers = req.headers;
-    // Response
-    res.end('Hello, there!');
-    // Log requested path and request method
-    console.log(`
-      Request received on path: ${trimmedPath}\n
-      The method is ${method}\n
-      Query String Object: %j\n
-      Headers: %j\n
-      `, queryStringObject, headers);
+    // Get the payload
+    const decoder = new StringDecoder();
+    let buffer = '';
+
+    req.on('data', function(data) {
+      buffer += decoder.write(data);
+    });
+
+    req.on('end', function() {
+      // Response
+      res.end('Hello, there!');
+      // Log requested path and request method
+      console.log(`
+        Request received on path: ${trimmedPath}\n
+        The method is ${method}\n
+        The payload is: ${buffer}\n
+        Query String Object: %j\n
+        Headers: %j\n
+        `, queryStringObject, headers);
+    });
 });
 
 // Start server on port 3000
