@@ -47,3 +47,22 @@ const server = http.createServer(function (req, res) {
 server.listen(3000, function () {
     console.log('Server is listening on port: 3000');
 });
+
+// define handlers
+const handlers = {};
+
+// define test handler
+handlers.test = function(data, callback) {
+  // callback with statusCode and payload
+  callback(405, { 'name': 'Test Handler' });
+};
+
+// define 404 notFound handler
+handlers.notFound = function(data, callback) {
+  callback(404, { 'message': 'Resource Not Found!' });
+};
+
+// Define router
+const router = {
+  'test' : handler.test
+}
