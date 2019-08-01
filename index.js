@@ -30,16 +30,40 @@ const server = http.createServer(function (req, res) {
     });
 
     req.on('end', function() {
-      // Response
-      res.end('Hello, there!');
-      // Log requested path and request method
-      console.log(`
-        Request received on path: ${trimmedPath}\n
-        The method is ${method}\n
-        The payload is: ${buffer}\n
-        Query String Object: %j\n
-        Headers: %j\n
-        `, queryStringObject, headers);
+
+      buffer = decoder.end();
+
+      // spicify the requested resource
+      const handlerPath = router.hasOwnProperty(trimmedPath) ? router[trimmedPath] : handlers.notFound;
+
+      // Construct data object to send to handler
+      const data = {
+        headers,
+        method,
+        queryStringObject,
+        trimmedPath,
+        'payload': buffer
+      }
+
+      // route the request to the handler
+      handlerPath(data, function(statusCode = 200, payload) {
+        // set default default payload
+        payload = typeof(payload) == 'object' ? payload : {};
+        const payloadString = JSON.stringify(payload);
+
+        // Response
+        res.writeHead(statusCode);
+        res.end(payloadString);
+        // info log
+        console.info(`
+          Request received on path: ${trimmedPath}\n
+          The method is ${method}\n
+          The payload is: ${buffer}\n
+          Query String Object: %j\n
+          Headers: %j\n
+          Returned payload: ${payloadString}\n
+          `, queryStringObject, headers);
+      });
     });
 });
 
@@ -64,5 +88,5 @@ handlers.notFound = function(data, callback) {
 
 // Define router
 const router = {
-  'test' : handler.test
+  'test' : handlers.test
 }
