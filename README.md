@@ -13,4 +13,4 @@ The app is useable, it has sign-up and sign-in. Also it includes functionality t
 > 6. The API allows a sign-in user to edit or delete any of their checks. And it limits their checks to 5
 > 7. In the background, workers perform all the `checks` at the appropriate times, and send alerts to the users when a check changes its state from `up` to `down`, or vis versa.
 
-For the majority the app uses Node.js API but, to send alerts via SMS it uses Twilio API but, this doesn't mean it uses a 3rd-party library to connect to Twilio, We are crafting the HTTP request by hand.
+For the majority the app uses Node.js API but, to send alerts via SMS it uses Twilio API but, this doesn't mean it uses a 3rd-party library to connect to Twilio, The HTTP requests are crafted by hand.
