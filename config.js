@@ -17,7 +17,7 @@ environments.development = {
 // environment stages (production)
 environments.production = {
   httpPort: 5000,
-  httpsPort: 5001
+  httpsPort: 5001,
   stage: 'production'
 };
 
