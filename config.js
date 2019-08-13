@@ -9,13 +9,15 @@ const environments = {};
 
 // environment stages (default) - development
 environments.development = {
-  port: 3000,
+  httpPort: 3000,
+  httpsPort: 3001,
   stage: 'development'
 };
 
 // environment stages (production)
 environments.production = {
-  port: 5252,
+  httpPort: 5000,
+  httpsPort: 5001
   stage: 'production'
 };
 
