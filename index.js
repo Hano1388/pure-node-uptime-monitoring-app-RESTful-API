@@ -101,11 +101,10 @@ const unifiedServer = function(req, res) {
 // define handlers
 const handlers = {};
 
-// define test handler
-handlers.test = function(data, callback) {
-  // callback with statusCode and payload
-  callback(405, { 'name': 'Test Handler' });
-};
+// define ping route
+handlers.ping = function(data, callback) {
+  callback(200);
+}
 
 // define 404 notFound handler
 handlers.notFound = function(data, callback) {
@@ -114,5 +113,5 @@ handlers.notFound = function(data, callback) {
 
 // Define router
 const router = {
-  'test' : handlers.test
+  'ping': handlers.ping
 }
