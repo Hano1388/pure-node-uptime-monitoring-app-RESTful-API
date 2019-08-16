@@ -11,6 +11,13 @@ const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 // require config file
 const config = require('./config');
+const _data = require('./lib/data');
+
+// write data to a file
+// @TODO delete this
+_data.create('test', 'newFile', { "message": "Hello World!" }, function(err) {
+  console.log('Error: ', err);
+});
 
 // Create http server
 const httpServer = http.createServer(function (req, res) {
@@ -34,9 +41,9 @@ const httpsServer = https.createServer(httpServerOptions, function (req, res) {
 });
 
 // Start httpsServer
-httpsServer.listen(config.httpsPort, function () {
-    console.log(`Server is listening on port: ${config.httpsPort} in ${config.stage} mode`);
-});
+// httpsServer.listen(config.httpsPort, function () {
+//     console.log(`Server is listening on port: ${config.httpsPort} in ${config.stage} mode`);
+// });
 
 // Unified Server
 const unifiedServer = function(req, res) {
