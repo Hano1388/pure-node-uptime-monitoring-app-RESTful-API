@@ -15,8 +15,19 @@ const _data = require('./lib/data');
 
 // write data to a file
 // @TODO delete this
+/*
 _data.create('test', 'newFile', { "message": "Hello World!" }, function(err) {
   console.log('Error: ', err);
+});
+*/
+
+// read data from a file
+// @TODO delete this
+_data.read('test', 'newFile', function(err, data) {
+  if (err) {
+    console.log('Error: ', err);
+  }
+  console.log('data: ', data);
 });
 
 // Create http server
