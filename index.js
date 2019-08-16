@@ -19,18 +19,18 @@ const _data = require('./lib/data');
 _data.create('test', 'newFile', { "message": "Hello World!" }, function(err) {
   console.error(err);
 });
-*/
+
 
 // read data from a file
 // @TODO delete this
-/*
+
 _data.read('test', 'newFile', function(err, data) {
   if (err) {
     console.error('Error: ', err);
   }
   console.log('data: ', data);
 });
-*/
+
 
 // Updating a file
 _data.update('test', 'newFile', { "color": "Grey", "id": "!h7#8*93jsdfj^$" }, (err) => {
@@ -38,6 +38,16 @@ _data.update('test', 'newFile', { "color": "Grey", "id": "!h7#8*93jsdfj^$" }, (e
     console.error(err);
   } else {
     console.log('Successfully updated newFile');
+  };
+});
+*/
+
+// Deleting a file
+_data.delete('test', 'newFile', (err) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log('Successfully deleted newFile');
   };
 });
 
