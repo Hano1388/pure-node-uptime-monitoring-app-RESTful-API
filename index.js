@@ -10,47 +10,9 @@ const fs = require('fs');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 // require config file
-const config = require('./config');
+const config = require('./lib/config');
 const handlers = require('./lib/handlers');
-const _data = require('./lib/data');
-
-// write data to a file
-// @TODO delete this
-/*
-_data.create('test', 'newFile', { "message": "Hello World!" }, function(err) {
-  console.error(err);
-});
-
-
-// read data from a file
-// @TODO delete this
-
-_data.read('test', 'newFile', function(err, data) {
-  if (err) {
-    console.error('Error: ', err);
-  }
-  console.log('data: ', data);
-});
-
-
-// Updating a file
-_data.update('test', 'newFile', { "color": "Grey", "id": "!h7#8*93jsdfj^$" }, (err) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log('Successfully updated newFile');
-  };
-});
-
-// Deleting a file
-_data.delete('test', 'newFile', (err) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log('Successfully deleted newFile');
-  };
-});
-*/
+const helpers = require('./lib/helpers');
 
 // Create http server
 const httpServer = http.createServer((req, res) => {
@@ -101,10 +63,12 @@ const unifiedServer = (req, res) => {
 
   req.on('end', () => {
 
-    buffer = decoder.end();
+    buffer += decoder.end();
+    const payload = helpers.parseJsonToObject(buffer);
 
     // spicify the requested resource
     const handlerPath = router.hasOwnProperty(trimmedPath) ? router[trimmedPath] : handlers.notFound;
+
 
     // Construct data object to send to handler
     const data = {
@@ -112,13 +76,18 @@ const unifiedServer = (req, res) => {
       method,
       queryStringObject,
       trimmedPath,
-      'payload': buffer
+      payload
     }
 
     // route the request to the handler
-    handlerPath(data, (statusCode = 200, payload) => {
+    handlerPath(data, (statusCode, payload) => {
+
+      // Use the status code returned from the handler, or set the default status code to 200
+      statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
       // set default default payload
       payload = typeof(payload) == 'object' ? payload : {};
+
+      // convert payload to a string
       const payloadString = JSON.stringify(payload);
 
       // Response
@@ -126,19 +95,20 @@ const unifiedServer = (req, res) => {
       res.writeHead(statusCode);
       res.end(payloadString);
       // info log
-      console.info(`
-        Request received on path: ${trimmedPath}\n
-        The method is ${method}\n
-        The payload is: ${buffer}\n
-        Query String Object: %j\n
-        Headers: %j\n
-        Returned payload: ${payloadString}\n
-        `, queryStringObject, headers);
+      // console.info(`
+      //   Request received on path: ${trimmedPath}\n
+      //   The method is ${method}\n
+      //   The payload is: ${buffer}\n
+      //   Query String Object: %j\n
+      //   Headers: %j\n
+      //   Returned payload: ${payloadString}\n
+      //   `, queryStringObject, headers);
     });
   });
 };
 
 // Define router
 const router = {
-  'ping': handlers.ping
+  'ping': handlers.ping,
+  'users': handlers.users
 }
