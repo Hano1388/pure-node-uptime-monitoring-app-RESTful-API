@@ -11,6 +11,7 @@ const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 // require config file
 const config = require('./config');
+const handlers = require('./lib/handlers');
 const _data = require('./lib/data');
 
 // write data to a file
@@ -40,7 +41,6 @@ _data.update('test', 'newFile', { "color": "Grey", "id": "!h7#8*93jsdfj^$" }, (e
     console.log('Successfully updated newFile');
   };
 });
-*/
 
 // Deleting a file
 _data.delete('test', 'newFile', (err) => {
@@ -50,14 +50,15 @@ _data.delete('test', 'newFile', (err) => {
     console.log('Successfully deleted newFile');
   };
 });
+*/
 
 // Create http server
-const httpServer = http.createServer(function (req, res) {
+const httpServer = http.createServer((req, res) => {
   unifiedServer(req, res);
 });
 
 // Start httpServer
-httpServer.listen(config.httpPort, function () {
+httpServer.listen(config.httpPort, () => {
     console.log(`Server is listening on port: ${config.httpPort} in ${config.stage} mode`);
 });
 
@@ -68,7 +69,7 @@ const httpServerOptions = {
 };
 
 // Create httpsServer
-const httpsServer = https.createServer(httpServerOptions, function (req, res) {
+const httpsServer = https.createServer(httpServerOptions, (req, res) => {
   unifiedServer(req, res);
 });
 
@@ -78,7 +79,7 @@ const httpsServer = https.createServer(httpServerOptions, function (req, res) {
 // });
 
 // Unified Server
-const unifiedServer = function(req, res) {
+const unifiedServer = (req, res) => {
   // Parse URL
   const parsedUrl = url.parse(req.url, true);
   // Get Path
@@ -94,11 +95,11 @@ const unifiedServer = function(req, res) {
   const decoder = new StringDecoder();
   let buffer = '';
 
-  req.on('data', function(data) {
+  req.on('data', (data) => {
     buffer += decoder.write(data);
   });
 
-  req.on('end', function() {
+  req.on('end', () => {
 
     buffer = decoder.end();
 
@@ -115,7 +116,7 @@ const unifiedServer = function(req, res) {
     }
 
     // route the request to the handler
-    handlerPath(data, function(statusCode = 200, payload) {
+    handlerPath(data, (statusCode = 200, payload) => {
       // set default default payload
       payload = typeof(payload) == 'object' ? payload : {};
       const payloadString = JSON.stringify(payload);
@@ -135,19 +136,6 @@ const unifiedServer = function(req, res) {
         `, queryStringObject, headers);
     });
   });
-};
-
-// define handlers
-const handlers = {};
-
-// define ping route
-handlers.ping = function(data, callback) {
-  callback(200);
-}
-
-// define 404 notFound handler
-handlers.notFound = function(data, callback) {
-  callback(404, { 'message': 'Resource Not Found!' });
 };
 
 // Define router
